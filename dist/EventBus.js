@@ -8,7 +8,7 @@
       exports: {}
     };
     factory(mod.exports);
-    global.EventBus = mod.exports.default;
+    global.EventBus = mod.exports;
   }
 })(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports) {
   "use strict";
