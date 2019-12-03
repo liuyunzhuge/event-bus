@@ -48,23 +48,9 @@
 
         console.log('===============================')
 
-        bus.trigger('some.n1', 'test')// trigger 1 2 3 5
+        bus.off('some.n2') //remove 1 2 3 4
 
-        console.log('===============================')
-
-        bus.trigger('some.n1.n2', 'test')// trigger 1 2 3
-
-        console.log('===============================')
-
-        bus.trigger('some.n3.n2', 'test')// trigger 1 2 4
-
-        console.log('===============================')
-
-        bus.trigger('some.n3.n2.n1', 'test')// trigger 1 2
-
-        console.log('===============================')
-
-        bus.trigger('some.n3.n2.n4', 'test')// trigger 1
+        bus.trigger('some', 'test')// trigger 5 6
     </script>
 </body>
 

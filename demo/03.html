@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="../dist/index.js"></script>
+</head>
+
+<body>
+
+    <script>
+        let bus = new EventBus;
+
+        let handler1, handler2, handler3;
+
+        // 1
+        bus.on('some.n1.n2.n3.n4', (handler1 = d => {
+            console.log('some.n1.n2.n3.n4', d)
+        }))
+
+        // 2
+        bus.on('some.n1.n2.n3', (handler2 = d => {
+            console.log('some.n1.n2.n3', d)
+        }))
+
+        // 3
+        bus.on('some.n1.n2', (handler3 = d => {
+            console.log('some.n1.n2', d)
+        }))
+
+        bus.trigger('some', 'test')// trigger 1 2 3
+
+        console.log('===============================')
+
+        bus.off('some.n2.n3', handler2) // only remove 2
+
+        bus.trigger('some', 'test')// trigger 1 3
+    </script>
+</body>
+
+</html>

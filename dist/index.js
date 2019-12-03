@@ -1,9 +1,13 @@
 const isArray = some => Object.prototype.toString.call(some) == '[object Array]'
 const slice = Array.prototype.slice
 
-function formatEvent(event) {
+function parseEvent(event) {
     event = event.split('.')
-    return { name: event, namespaceList: event.slice(1) }
+    return { name: event[0], namespaceList: event.slice(1).sort() }
+}
+
+function getNamespaceMatcher(namespaceList) {
+    return new RegExp("(^|\\.)" + namespaceList.join("\\.(?:.*\\.|)") + "(\\.|$)");
 }
 
 function normalizeEvents(events) {
@@ -12,7 +16,7 @@ function normalizeEvents(events) {
     }
 
     for (let [i, event] of events.entries()) {
-        events[i] = formatEvent(event)
+        events[i] = parseEvent(event)
     }
 
     return events
@@ -38,7 +42,7 @@ function findEntry(entries, name) {
     return null
 }
 
-class EventCenter {
+class EventBus {
 
     /**
      * Map is more convenient than Object
@@ -48,7 +52,7 @@ class EventCenter {
     /**
      * @param {String|Array} events
      * @param {Function} callback
-     * @return {EventCenter}
+     * @return {EventBus}
      * 
      * register events and its callbacks
      */
@@ -57,7 +61,7 @@ class EventCenter {
 
         for (let event of events) {
             let entry = findEntryOrCreate(this.entries, event.name)
-            entry.addCallback(callback, event.namespaceList, once)
+            entry.addCallback(event.namespaceList, callback, once)
         }
 
         return this
@@ -66,28 +70,7 @@ class EventCenter {
     /**
      * @param {String|Array} events
      * @param {Function} callback
-     * @return {EventCenter}
-     * 
-     * remove events and its callbacks
-     */
-    off(events, callback) {
-        if (!events) return this.entries.clear()
-
-        events = normalizeEvents(events)
-        for (let event of events) {
-            let entry = findEntry(this.entries, event.name)
-            if (entry) {
-                entry.removeCallback(callback)
-            }
-        }
-
-        return this
-    }
-
-    /**
-     * @param {String|Array} events
-     * @param {Function} callback
-     * @return {EventCenter}
+     * @return {EventBus}
      * 
      * register events and its callbacks just once
      */
@@ -96,15 +79,44 @@ class EventCenter {
     }
 
     /**
+     * @param {String|Array} events
+     * @param {Function} callback
+     * @return {EventBus}
+     * 
+     * remove events and its callbacks
+     */
+    off(...args) {
+        let events, callback
+        if (args.length === 1) {
+            events = args[0]
+        } else if (args.length == 2) {
+            events = args[0]
+            callback = args[1]
+        } else {
+            return this.entries.clear()
+        }
+
+        events = normalizeEvents(events)
+        for (let event of events) {
+            let entry = findEntry(this.entries, event.name)
+            if (entry) {
+                entry.removeCallback(event.namespaceList, callback)
+            }
+        }
+
+        return this
+    }
+
+    /**
      * @param {String} event 
      * 
      * dispatch event
      */
     trigger(event, ...data) {
-        event = formatEvent(event)
+        event = parseEvent(event)
         let entry = findEntry(this.entries, event.name)
         if (entry) {
-            entry.fire(...data)
+            entry.fire(event.namespaceList, ...data)
         }
 
         return this
@@ -131,31 +143,38 @@ class EventEntry {
         return this._name
     }
 
-    addCallback(callback, namespaceList, once = false) {
-        this.listeners.push(new EventListener(callback, namespaceList, once))
+    addCallback(namespaceList, callback, once = false) {
+        this.listeners.push(new EventListener(callback, namespaceList.join('.'), once))
     }
 
-    removeCallback(callback) {
-        let removeAll = callback === undefined
+    removeCallback(namespaceList, callback) {
+        let matcher = namespaceList.length && getNamespaceMatcher(namespaceList)
 
         for (let i = this.listeners.length - 1; i >= 0; i--) {
-            if (this.listeners[i].callback === callback || removeAll) {
-                this.listeners.splice(i, 1)
+            if (!matcher || matcher.test(this.listeners[i].namespaces)) {
+                if (!callback || this.listeners[i].callback === callback) {
+                    this.listeners.splice(i, 1)
+                }
             }
         }
     }
 
-    fire(...data) {
+    fire(namespaceList, ...data) {
         let toBeRemoved = []
 
-        this.listeners.forEach((listener, index) => {
-            listener.callback(...data)
+        let matcher = namespaceList.length && getNamespaceMatcher(namespaceList)
 
-            if (listener.once) {
-                toBeRemoved.push(index)
+        this.listeners.forEach((listener, index) => {
+            if (!matcher || matcher.test(listener.namespaces)) {
+                listener.callback(...data)
+
+                if (listener.once) {
+                    toBeRemoved.push(index)
+                }
             }
         })
 
+        if (!toBeRemoved.length) return
         let hasRemoved = 0
         for (let index of toBeRemoved) {
             this.listeners.splice(index - hasRemoved, 1)
@@ -167,22 +186,12 @@ class EventEntry {
 class EventListener {
     _callback
     _once
-    _namespaceMatcher
+    _namespaces
 
-    constructor(_callback, _namespaceList, _once) {
+    constructor(_callback, _namespaces, _once) {
         this._callback = _callback
         this._once = _once
-        if (_namespaceList.length) {
-            this._namespaceMatcher = new RegExp('(' + _namespaceList.map(ns => '\.' + ns).join('|') + ')')
-        }
-    }
-
-    checkNamespaceMatch(namespaceString) {
-        if (!this._namespaceMatcher) return false
-        let results = namespaceString.match(this._namespaceMatcher)
-        if (namespaceString.match(this._namespaceMatcher)) {
-
-        }
+        this._namespaces = _namespaces
     }
 
     get callback() {
@@ -191,5 +200,9 @@ class EventListener {
 
     get once() {
         return this._once
+    }
+
+    get namespaces() {
+        return this._namespaces
     }
 }
