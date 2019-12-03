@@ -1,5 +1,4 @@
 const isArray = some => Object.prototype.toString.call(some) == '[object Array]'
-const slice = Array.prototype.slice
 
 function parseEvent(event) {
     event = event.split('.')
@@ -206,3 +205,5 @@ class EventListener {
         return this._namespaces
     }
 }
+
+export default EventBus
