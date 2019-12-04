@@ -1,48 +1,61 @@
+var _Object$defineProperty = require("@babel/runtime-corejs3/core-js/object/define-property");
+
+var _globalThis = require("@babel/runtime-corejs3/core-js/global-this");
+
+var _sortInstanceProperty2 = require("@babel/runtime-corejs3/core-js/instance/sort");
+
+var _sliceInstanceProperty2 = require("@babel/runtime-corejs3/core-js/instance/slice");
+
+var _entriesInstanceProperty2 = require("@babel/runtime-corejs3/core-js/instance/entries");
+
+var _mapInstanceProperty = require("@babel/runtime-corejs3/core-js/instance/map");
+
+var _concatInstanceProperty2 = require("@babel/runtime-corejs3/core-js/instance/concat");
+
+var _spliceInstanceProperty2 = require("@babel/runtime-corejs3/core-js/instance/splice");
+
+var _forEachInstanceProperty2 = require("@babel/runtime-corejs3/core-js/instance/for-each");
+
 (function (global, factory) {
   if (typeof define === "function" && define.amd) {
-    define(["exports"], factory);
+    define(["exports", "@babel/runtime-corejs3/core-js/instance/for-each", "@babel/runtime-corejs3/core-js/instance/splice", "@babel/runtime-corejs3/core-js/instance/concat", "@babel/runtime-corejs3/core-js/map", "@babel/runtime-corejs3/core-js/instance/entries", "@babel/runtime-corejs3/core-js/get-iterator", "@babel/runtime-corejs3/core-js/instance/slice", "@babel/runtime-corejs3/core-js/instance/sort"], factory);
   } else if (typeof exports !== "undefined") {
-    factory(exports);
+    factory(exports, require("@babel/runtime-corejs3/core-js/instance/for-each"), require("@babel/runtime-corejs3/core-js/instance/splice"), require("@babel/runtime-corejs3/core-js/instance/concat"), require("@babel/runtime-corejs3/core-js/map"), require("@babel/runtime-corejs3/core-js/instance/entries"), require("@babel/runtime-corejs3/core-js/get-iterator"), require("@babel/runtime-corejs3/core-js/instance/slice"), require("@babel/runtime-corejs3/core-js/instance/sort"));
   } else {
     var mod = {
       exports: {}
     };
-    factory(mod.exports);
+    factory(mod.exports, _forEachInstanceProperty2(global), _spliceInstanceProperty2(global), _concatInstanceProperty2(global), _mapInstanceProperty(global), _entriesInstanceProperty2(global), global.getIterator, _sliceInstanceProperty2(global), _sortInstanceProperty2(global));
     global.EventBus = mod.exports;
   }
-})(typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : this, function (_exports) {
+})(typeof _globalThis !== "undefined" ? _globalThis : typeof self !== "undefined" ? self : this, function (_exports, _forEach, _splice, _concat, _map, _entries, _getIterator2, _slice, _sort) {
   "use strict";
 
-  Object.defineProperty(_exports, "__esModule", {
+  _Object$defineProperty(_exports, "__esModule", {
     value: true
   });
+
   _exports["default"] = void 0;
-
-  function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-  function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
-
-  function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
-
-  function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-  function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
-
-  function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
-
-  function _iterableToArrayLimit(arr, i) { if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) { return; } var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
-
-  function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+  _forEach = babelHelpers.interopRequireDefault(_forEach);
+  _splice = babelHelpers.interopRequireDefault(_splice);
+  _concat = babelHelpers.interopRequireDefault(_concat);
+  _map = babelHelpers.interopRequireDefault(_map);
+  _entries = babelHelpers.interopRequireDefault(_entries);
+  _getIterator2 = babelHelpers.interopRequireDefault(_getIterator2);
+  _slice = babelHelpers.interopRequireDefault(_slice);
+  _sort = babelHelpers.interopRequireDefault(_sort);
 
   var isArray = function isArray(some) {
     return Object.prototype.toString.call(some) == '[object Array]';
   };
 
   function parseEvent(event) {
+    var _context;
+
     event = event.split('.');
     return {
       name: event[0],
-      namespaceList: event.slice(1).sort()
+      namespaceList: (0, _sort["default"])(_context = (0, _slice["default"])(event).call(event, 1)).call(_context)
     };
   }
 
@@ -60,8 +73,8 @@
     var _iteratorError = undefined;
 
     try {
-      for (var _iterator = events.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var _step$value = _slicedToArray(_step.value, 2),
+      for (var _iterator = (0, _getIterator2["default"])((0, _entries["default"])(events).call(events)), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+        var _step$value = babelHelpers.slicedToArray(_step.value, 2),
             i = _step$value[0],
             event = _step$value[1];
 
@@ -110,12 +123,11 @@
   /*#__PURE__*/
   function () {
     function EventBus() {
-      _classCallCheck(this, EventBus);
-
-      _defineProperty(this, "entries", new Map());
+      babelHelpers.classCallCheck(this, EventBus);
+      babelHelpers.defineProperty(this, "entries", new _map["default"]());
     }
 
-    _createClass(EventBus, [{
+    babelHelpers.createClass(EventBus, [{
       key: "on",
 
       /**
@@ -133,9 +145,9 @@
         var _iteratorError2 = undefined;
 
         try {
-          for (var _iterator2 = events[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+          for (var _iterator2 = (0, _getIterator2["default"])(events), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
             var event = _step2.value;
-            var entry = findEntryOrCreate(this.entries, event.name);
+            var entry = findEntryOrCreate((0, _entries["default"])(this), event.name);
             entry.addCallback(event.namespaceList, callback, once);
           }
         } catch (err) {
@@ -187,7 +199,7 @@
           events = arguments.length <= 0 ? undefined : arguments[0];
           callback = arguments.length <= 1 ? undefined : arguments[1];
         } else {
-          return this.entries.clear();
+          return (0, _entries["default"])(this).clear();
         }
 
         events = normalizeEvents(events);
@@ -196,9 +208,9 @@
         var _iteratorError3 = undefined;
 
         try {
-          for (var _iterator3 = events[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
+          for (var _iterator3 = (0, _getIterator2["default"])(events), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
             var event = _step3.value;
-            var entry = findEntry(this.entries, event.name);
+            var entry = findEntry((0, _entries["default"])(this), event.name);
 
             if (entry) {
               entry.removeCallback(event.namespaceList, callback);
@@ -231,20 +243,21 @@
       key: "trigger",
       value: function trigger(event) {
         event = parseEvent(event);
-        var entry = findEntry(this.entries, event.name);
+        var entry = findEntry((0, _entries["default"])(this), event.name);
 
         if (entry) {
+          var _context2;
+
           for (var _len = arguments.length, data = new Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
             data[_key - 1] = arguments[_key];
           }
 
-          entry.fire.apply(entry, [event.namespaceList].concat(data));
+          entry.fire.apply(entry, (0, _concat["default"])(_context2 = [event.namespaceList]).call(_context2, data));
         }
 
         return this;
       }
     }]);
-
     return EventBus;
   }();
 
@@ -252,16 +265,13 @@
   /*#__PURE__*/
   function () {
     function EventEntry(name) {
-      _classCallCheck(this, EventEntry);
-
-      _defineProperty(this, "_listeners", void 0);
-
-      _defineProperty(this, "_name", void 0);
-
+      babelHelpers.classCallCheck(this, EventEntry);
+      babelHelpers.defineProperty(this, "_listeners", void 0);
+      babelHelpers.defineProperty(this, "_name", void 0);
       this._name = name;
     }
 
-    _createClass(EventEntry, [{
+    babelHelpers.createClass(EventEntry, [{
       key: "addCallback",
       value: function addCallback(namespaceList, callback) {
         var once = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
@@ -275,7 +285,9 @@
         for (var i = this.listeners.length - 1; i >= 0; i--) {
           if (!matcher || matcher.test(this.listeners[i].namespaces)) {
             if (!callback || this.listeners[i].callback === callback) {
-              this.listeners.splice(i, 1);
+              var _context3;
+
+              (0, _splice["default"])(_context3 = this.listeners).call(_context3, i, 1);
             }
           }
         }
@@ -283,13 +295,15 @@
     }, {
       key: "fire",
       value: function fire(namespaceList) {
+        var _context4;
+
         for (var _len2 = arguments.length, data = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
           data[_key2 - 1] = arguments[_key2];
         }
 
         var toBeRemoved = [];
         var matcher = namespaceList.length && getNamespaceMatcher(namespaceList);
-        this.listeners.forEach(function (listener, index) {
+        (0, _forEach["default"])(_context4 = this.listeners).call(_context4, function (listener, index) {
           if (!matcher || matcher.test(listener.namespaces)) {
             listener.callback.apply(listener, data);
 
@@ -301,9 +315,11 @@
         if (!toBeRemoved.length) return;
         var hasRemoved = 0;
 
-        for (var _i2 = 0, _toBeRemoved = toBeRemoved; _i2 < _toBeRemoved.length; _i2++) {
-          var index = _toBeRemoved[_i2];
-          this.listeners.splice(index - hasRemoved, 1);
+        for (var _i = 0, _toBeRemoved = toBeRemoved; _i < _toBeRemoved.length; _i++) {
+          var _context5;
+
+          var index = _toBeRemoved[_i];
+          (0, _splice["default"])(_context5 = this.listeners).call(_context5, index - hasRemoved, 1);
           hasRemoved += 1;
         }
       }
@@ -322,7 +338,6 @@
         return this._name;
       }
     }]);
-
     return EventEntry;
   }();
 
@@ -330,20 +345,16 @@
   /*#__PURE__*/
   function () {
     function EventListener(_callback, _namespaces, _once) {
-      _classCallCheck(this, EventListener);
-
-      _defineProperty(this, "_callback", void 0);
-
-      _defineProperty(this, "_once", void 0);
-
-      _defineProperty(this, "_namespaces", void 0);
-
+      babelHelpers.classCallCheck(this, EventListener);
+      babelHelpers.defineProperty(this, "_callback", void 0);
+      babelHelpers.defineProperty(this, "_once", void 0);
+      babelHelpers.defineProperty(this, "_namespaces", void 0);
       this._callback = _callback;
       this._once = _once;
       this._namespaces = _namespaces;
     }
 
-    _createClass(EventListener, [{
+    babelHelpers.createClass(EventListener, [{
       key: "callback",
       get: function get() {
         return this._callback;
@@ -359,7 +370,6 @@
         return this._namespaces;
       }
     }]);
-
     return EventListener;
   }();
 

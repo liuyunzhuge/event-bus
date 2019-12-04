@@ -2,7 +2,9 @@
   "name": "breif-event-bus",
   "version": "0.1.3",
   "description": " a simple library that provides pub/sub services, which can be used in SPA or `little program` ",
-  "main": "dist/EventBus.js",
+  "main": "dist/EventBus.cjs.js",
+  "module": "dist/EventBus.esm.js",
+  "browser": "dist/EventBus.umd.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/liuyunzhuge/event-bus"
@@ -19,13 +21,22 @@
   "devDependencies": {
     "@babel/cli": "^7.7.4",
     "@babel/core": "^7.7.4",
+    "@babel/plugin-external-helpers": "^7.7.4",
     "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-transform-runtime": "^7.7.4",
     "@babel/preset-env": "^7.7.4",
-    "browser-sync": "^2.26.7"
+    "browser-sync": "^2.26.7",
+    "rollup": "^1.27.8",
+    "rollup-plugin-babel": "^4.3.3",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0"
   },
   "scripts": {
     "compile": "babel src --out-dir dist",
     "server": "node server.js",
     "prepublish": "npm run compile"
+  },
+  "dependencies": {
+    "@babel/runtime-corejs3": "^7.7.4"
   }
 }

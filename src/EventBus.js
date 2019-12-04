@@ -46,7 +46,7 @@ class EventBus {
     /**
      * Map is more convenient than Object
      */
-    entries = new Map()
+    entries = new Map();
 
     /**
      * @param {String|Array} events
