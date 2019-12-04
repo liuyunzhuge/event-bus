@@ -65,8 +65,14 @@ export default [
             commonjs() // so Rollup can convert `ms` to an ES module
         ],
         output: [
-            { file: pkg.main, format: 'cjs', plugins: [babel.generated(outputBabelOptions)] },
-            { file: pkg.module, format: 'es', plugins: [babel.generated(outputBabelOptions)] }
+            {
+                file: pkg.main, format: 'cjs',
+                // plugins: [babel.generated(outputBabelOptions)] 
+            },
+            {
+                file: pkg.module, format: 'es',
+                // plugins: [babel.generated(outputBabelOptions)] 
+            }
         ]
     }
 ];
