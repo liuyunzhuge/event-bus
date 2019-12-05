@@ -1,6 +1,6 @@
 {
   "name": "breif-event-bus",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": " a simple library that provides pub/sub services, which can be used in SPA or `little program` ",
   "main": "dist/EventBus.cjs.js",
   "module": "dist/EventBus.esm.js",
