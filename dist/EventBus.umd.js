@@ -10,6 +10,8 @@
     }
   }
 
+  var classCallCheck = _classCallCheck;
+
   function _defineProperties(target, props) {
     for (var i = 0; i < props.length; i++) {
       var descriptor = props[i];
@@ -26,6 +28,8 @@
     return Constructor;
   }
 
+  var createClass = _createClass;
+
   function _defineProperty(obj, key, value) {
     if (key in obj) {
       Object.defineProperty(obj, key, {
@@ -41,13 +45,13 @@
     return obj;
   }
 
-  function _slicedToArray(arr, i) {
-    return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
-  }
+  var defineProperty = _defineProperty;
 
   function _arrayWithHoles(arr) {
     if (Array.isArray(arr)) return arr;
   }
+
+  var arrayWithHoles = _arrayWithHoles;
 
   function _iterableToArrayLimit(arr, i) {
     if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
@@ -79,9 +83,19 @@
     return _arr;
   }
 
+  var iterableToArrayLimit = _iterableToArrayLimit;
+
   function _nonIterableRest() {
     throw new TypeError("Invalid attempt to destructure non-iterable instance");
   }
+
+  var nonIterableRest = _nonIterableRest;
+
+  function _slicedToArray(arr, i) {
+    return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || nonIterableRest();
+  }
+
+  var slicedToArray = _slicedToArray;
 
   var isArray = function isArray(some) {
     return Object.prototype.toString.call(some) == '[object Array]';
@@ -110,7 +124,7 @@
 
     try {
       for (var _iterator = events.entries()[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-        var _step$value = _slicedToArray(_step.value, 2),
+        var _step$value = slicedToArray(_step.value, 2),
             i = _step$value[0],
             event = _step$value[1];
 
@@ -159,12 +173,12 @@
   /*#__PURE__*/
   function () {
     function EventBus() {
-      _classCallCheck(this, EventBus);
+      classCallCheck(this, EventBus);
 
-      _defineProperty(this, "entries", new Map());
+      defineProperty(this, "entries", new Map());
     }
 
-    _createClass(EventBus, [{
+    createClass(EventBus, [{
       key: "on",
 
       /**
@@ -301,16 +315,16 @@
   /*#__PURE__*/
   function () {
     function EventEntry(name) {
-      _classCallCheck(this, EventEntry);
+      classCallCheck(this, EventEntry);
 
-      _defineProperty(this, "_listeners", void 0);
+      defineProperty(this, "_listeners", void 0);
 
-      _defineProperty(this, "_name", void 0);
+      defineProperty(this, "_name", void 0);
 
       this._name = name;
     }
 
-    _createClass(EventEntry, [{
+    createClass(EventEntry, [{
       key: "addCallback",
       value: function addCallback(namespaceList, callback) {
         var once = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
@@ -379,20 +393,20 @@
   /*#__PURE__*/
   function () {
     function EventListener(_callback, _namespaces, _once) {
-      _classCallCheck(this, EventListener);
+      classCallCheck(this, EventListener);
 
-      _defineProperty(this, "_callback", void 0);
+      defineProperty(this, "_callback", void 0);
 
-      _defineProperty(this, "_once", void 0);
+      defineProperty(this, "_once", void 0);
 
-      _defineProperty(this, "_namespaces", void 0);
+      defineProperty(this, "_namespaces", void 0);
 
       this._callback = _callback;
       this._once = _once;
       this._namespaces = _namespaces;
     }
 
-    _createClass(EventListener, [{
+    createClass(EventListener, [{
       key: "callback",
       get: function get() {
         return this._callback;

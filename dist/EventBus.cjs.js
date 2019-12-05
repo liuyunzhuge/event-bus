@@ -2,10 +2,10 @@
 
 function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/esm/classCallCheck'));
-var _createClass = _interopDefault(require('@babel/runtime/helpers/esm/createClass'));
-var _defineProperty = _interopDefault(require('@babel/runtime/helpers/esm/defineProperty'));
-var _slicedToArray = _interopDefault(require('@babel/runtime/helpers/esm/slicedToArray'));
+var _classCallCheck = _interopDefault(require('@babel/runtime/helpers/classCallCheck'));
+var _createClass = _interopDefault(require('@babel/runtime/helpers/createClass'));
+var _defineProperty = _interopDefault(require('@babel/runtime/helpers/defineProperty'));
+var _slicedToArray = _interopDefault(require('@babel/runtime/helpers/slicedToArray'));
 
 var isArray = function isArray(some) {
   return Object.prototype.toString.call(some) == '[object Array]';

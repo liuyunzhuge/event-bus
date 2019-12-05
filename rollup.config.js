@@ -4,55 +4,88 @@ import pkg from './package.json';
 import babel from 'rollup-plugin-babel';
 import { uglify } from 'rollup-plugin-uglify';
 
-export default [
-    {
+const ensureArray = maybeArr =>
+    Array.isArray(maybeArr) ? maybeArr : [maybeArr];
+
+const external = Object.keys(pkg.peerDependencies || {});
+const allExternal = external.concat(Object.keys(pkg.dependencies || {}));
+
+const makeExternalPredicate = externalArr => {
+    if (externalArr.length === 0) {
+        return () => false;
+    }
+    const pattern = new RegExp(`^(${externalArr.join('|')})($|/)`);
+    return id => pattern.test(id);
+};
+
+const createConfig = ({ output, umd = false, min = false} = {}) => {
+    return {
         input: 'src/EventBus.js',
+        output: ensureArray(output).map(output => {
+            if(min){
+                output.file = output.file.replace(/\.js$/, '.min.js');
+            }
+
+            return output
+        }),
+        plugins: [
+            resolve(),
+            babel({
+                exclude: 'node_modules/**',
+                runtimeHelpers: true,
+                plugins: [
+                    [
+                        '@babel/transform-runtime',
+                        {
+                            useESModules: output.format === 'es',
+                            corejs: false,
+                            generators: false
+                        }
+                    ]
+                ]
+            }),
+            commonjs(),
+            min &&
+            uglify({
+                compress: {
+                    pure_getters: true,
+                    unsafe: true,
+                    unsafe_comps: true
+                }
+            })
+        ].filter(Boolean),
+        external: makeExternalPredicate(umd ? external : allExternal)
+    };
+};
+
+export default [
+    createConfig({
         output: {
             name: 'EventBus',
             file: pkg.browser,
             format: 'umd'
         },
-        plugins: [
-            babel({
-                runtimeHelpers: true
-            }),
-            resolve(),
-            commonjs()
-        ]
-    },
-
-    // CommonJS (for Node) and ES module (for bundlers) build.
-    // (We could have three entries in the configuration array
-    // instead of two, but it's quicker to generate multiple
-    // builds from a single configuration where possible, using
-    // an array for the `output` option, where we can specify 
-    // `file` and `format` for each target)
-    {
-        input: 'src/EventBus.js',
-        plugins: [
-            babel({
-                runtimeHelpers: true,
-                plugins: [
-                    [
-                        "@babel/plugin-transform-runtime",
-                        {
-                            "regenerator": false
-                        }
-                    ]
-                ]
-            }),
-            resolve(),
-            commonjs()
-        ],
-        output: [
-            {
-                file: pkg.main, format: 'cjs',
-                // plugins: [babel.generated(outputBabelOptions)] 
-            },
-            {
-                file: pkg.module, format: 'es',
-                // plugins: [babel.generated(outputBabelOptions)] 
-            }
-        ]
-    }
+        umd: true
+    }),
+    createConfig({
+        output: {
+            name: 'EventBus',
+            file: pkg.browser,
+            format: 'umd'
+        },
+        umd: true,
+        min: true
+    }),
+    createConfig({
+        output: {
+            file: pkg.main,
+            format: 'cjs'
+        }
+    }),
+    createConfig({
+        output: {
+            file: pkg.module,
+            format: 'es'
+        }
+    })
 ];
