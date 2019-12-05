@@ -7,8 +7,7 @@ import { uglify } from 'rollup-plugin-uglify';
 const ensureArray = maybeArr =>
     Array.isArray(maybeArr) ? maybeArr : [maybeArr];
 
-const external = Object.keys(pkg.peerDependencies || {});
-const allExternal = external.concat(Object.keys(pkg.dependencies || {}));
+const external = Object.keys(pkg.dependencies || {});
 
 const makeExternalPredicate = externalArr => {
     if (externalArr.length === 0) {
@@ -18,7 +17,7 @@ const makeExternalPredicate = externalArr => {
     return id => pattern.test(id);
 };
 
-const createConfig = ({ output, umd = false, min = false} = {}) => {
+const createConfig = ({ output, min = false} = {}) => {
     return {
         input: 'src/EventBus.js',
         output: ensureArray(output).map(output => {
@@ -37,9 +36,7 @@ const createConfig = ({ output, umd = false, min = false} = {}) => {
                     [
                         '@babel/transform-runtime',
                         {
-                            useESModules: output.format === 'es',
-                            corejs: false,
-                            generators: false
+                            useESModules: output.format === 'es'
                         }
                     ]
                 ]
@@ -54,7 +51,7 @@ const createConfig = ({ output, umd = false, min = false} = {}) => {
                 }
             })
         ].filter(Boolean),
-        external: makeExternalPredicate(umd ? external : allExternal)
+        external: makeExternalPredicate(output.format === 'umd' ? [] : external)
     };
 };
 
@@ -64,8 +61,7 @@ export default [
             name: 'EventBus',
             file: pkg.browser,
             format: 'umd'
-        },
-        umd: true
+        }
     }),
     createConfig({
         output: {
@@ -73,7 +69,6 @@ export default [
             file: pkg.browser,
             format: 'umd'
         },
-        umd: true,
         min: true
     }),
     createConfig({
