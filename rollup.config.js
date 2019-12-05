@@ -17,11 +17,12 @@ const makeExternalPredicate = externalArr => {
     return id => pattern.test(id);
 };
 
-const createConfig = ({ output, min = false} = {}) => {
+const createConfig = ({ output, min = false } = {}) => {
     return {
-        input: 'src/EventBus.js',
+        input: 'src/index.js',
         output: ensureArray(output).map(output => {
-            if(min){
+            output.name = 'EventBus';
+            if (min) {
                 output.file = output.file.replace(/\.js$/, '.min.js');
             }
 
@@ -58,14 +59,12 @@ const createConfig = ({ output, min = false} = {}) => {
 export default [
     createConfig({
         output: {
-            name: 'EventBus',
             file: pkg.browser,
             format: 'umd'
         }
     }),
     createConfig({
         output: {
-            name: 'EventBus',
             file: pkg.browser,
             format: 'umd'
         },

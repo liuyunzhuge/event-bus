@@ -2,9 +2,9 @@
   "name": "breif-event-bus",
   "version": "0.1.5",
   "description": " a simple library that provides pub/sub services, which can be used in SPA or `little program` ",
-  "main": "dist/EventBus.cjs.js",
-  "module": "dist/EventBus.esm.js",
-  "browser": "dist/EventBus.umd.js",
+  "main": "dist/index.cjs.js",
+  "module": "dist/index.esm.js",
+  "browser": "dist/index.umd.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/liuyunzhuge/event-bus"
