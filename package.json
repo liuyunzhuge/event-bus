@@ -29,12 +29,12 @@
     "rollup": "^1.27.8",
     "rollup-plugin-babel": "^4.3.3",
     "rollup-plugin-commonjs": "^10.1.0",
-    "rollup-plugin-node-resolve": "^5.2.0"
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-uglify": "^6.0.3"
   },
   "scripts": {
     "compile": "babel src --out-dir dist",
-    "server": "node server.js",
-    "prepublish": "npm run compile"
+    "server": "node server.js"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.7.4"

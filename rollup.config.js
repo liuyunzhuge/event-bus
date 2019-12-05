@@ -2,41 +2,9 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import pkg from './package.json';
 import babel from 'rollup-plugin-babel';
-
-let inputBabelOptions = {
-    "presets": [
-        [
-            "@babel/preset-env",
-            {
-                "modules": "false",
-                "useBuiltIns": false
-            }
-        ]
-    ],
-    "plugins": [
-        "@babel/plugin-proposal-class-properties"
-    ]
-}
-
-
-let outputBabelOptions = {
-    "plugins": [
-        [
-            "@babel/plugin-transform-runtime",
-            {
-                "corejs": {
-                    "version": 3,
-                    "proposals": true
-                },
-                "regenerator": true
-            }
-        ]
-    ]
-}
-
+import { uglify } from 'rollup-plugin-uglify';
 
 export default [
-    // browser-friendly UMD build
     {
         input: 'src/EventBus.js',
         output: {
@@ -45,9 +13,11 @@ export default [
             format: 'umd'
         },
         plugins: [
-            babel(inputBabelOptions),
-            resolve(), // so Rollup can find `ms`
-            commonjs() // so Rollup can convert `ms` to an ES module
+            babel({
+                runtimeHelpers: true
+            }),
+            resolve(),
+            commonjs()
         ]
     },
 
@@ -60,9 +30,19 @@ export default [
     {
         input: 'src/EventBus.js',
         plugins: [
-            babel(inputBabelOptions),
-            resolve(), // so Rollup can find `ms`
-            commonjs() // so Rollup can convert `ms` to an ES module
+            babel({
+                runtimeHelpers: true,
+                plugins: [
+                    [
+                        "@babel/plugin-transform-runtime",
+                        {
+                            "regenerator": false
+                        }
+                    ]
+                ]
+            }),
+            resolve(),
+            commonjs()
         ],
         output: [
             {
