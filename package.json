@@ -33,7 +33,7 @@
     "rollup-plugin-uglify": "^6.0.3"
   },
   "scripts": {
-    "compile": "babel src --out-dir dist",
+    "compile": "rollup -c",
     "server": "node server.js"
   },
   "dependencies": {

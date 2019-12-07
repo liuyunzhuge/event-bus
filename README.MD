@@ -5,3 +5,79 @@
 # event-bus
 
 一个简单的event-bus实现，提供最简单的`on off trigger once`四个api，同时支持类似jq命名空间的事件管理。可应用于单页应用、小程序进行页面之间的通信。
+
+## 用法
+安装：
+```bash
+npm install breif-event-bus --save
+```
+浏览器环境，可通过上面的npm命令安装后，到`node_modules/breif-event-bus/dist`目录下，直接引用`index.umd.min.js`。
+
+**注意：**本库用到了一些新的es特性，打包发布到npm时，仅使用babel做了转码，没有做polyfill；如果使用词库，注意做polyfill。
+
+示例：
+```js
+import EventBus from "breif-event-bus"
+
+let bus = new EventBus 
+
+// 添加单个事件、单个监听
+bus.on('some', ()=> {
+
+})
+
+// 为多个事件注册一个监听
+bus.on([
+    'some',
+    'other',
+    'else'
+], ()=> {
+
+})
+
+// 带命名空间
+bus.on('some.n1.n2', ()=> {
+
+})
+
+// 派发事件
+bus.trigger('some')
+
+// 派发带命名空间的事件
+bus.trigger('some.n1')
+
+
+// 移除特定的监听
+let handler = ()=>{}
+bus.on('some', handler)
+bus.off('some', handler)
+
+// 带命名空间的移除监听
+bus.off('some.n1')
+
+// 下面这种方式不支持
+// bus.off('.n1') 
+
+// 注册仅执行一次的监听
+bus.once('some', ()=>{}) // on 替换为 once
+
+```
+**说明：**命名空间的特性，与jquery相同。
+
+## api
+只有四个：`on off once trigger`。
+
+### on( event, callback )
+- 参数：
+ - {string | Array<string>} event
+ - {Function} callback
+- 用法：
+监听当前实例上的自定义事件。事件可以由vm.$emit触发。回调函数会接收所有传入事件触发函数的额外参数。
+
+示例：
+
+vm.$on('test', function (msg) {
+  console.log(msg)
+})
+vm.$emit('test', 'hi')
+// => "hi"
