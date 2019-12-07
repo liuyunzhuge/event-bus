@@ -13,7 +13,7 @@ npm install breif-event-bus --save
 ```
 浏览器环境，可通过上面的npm命令安装后，到`node_modules/breif-event-bus/dist`目录下，直接引用`index.umd.min.js`。
 
-**注意：**本库用到了一些新的es特性，打包发布到npm时，仅使用babel做了转码，没有做polyfill；如果使用词库，注意做polyfill。
+**注意：** 本库用到了一些新的es特性，打包发布到npm时，仅使用babel做了转码，没有做polyfill；如果使用词库，注意做polyfill。
 
 示例：
 ```js
@@ -62,22 +62,30 @@ bus.off('some.n1')
 bus.once('some', ()=>{}) // on 替换为 once
 
 ```
-**说明：**命名空间的特性，与jquery相同。
+**说明：** 命名空间的特性，与jquery相同。
 
 ## api
 只有四个：`on off once trigger`。
 
 ### on( event, callback )
+
 - 参数：
- - {string | Array<string>} event
- - {Function} callback
-- 用法：
-监听当前实例上的自定义事件。事件可以由vm.$emit触发。回调函数会接收所有传入事件触发函数的额外参数。
+    - {string | Array<string>} event
+    - {Function} callback
 
-示例：
+### once( event, callback )
+注册仅执行一次的事件监听。
+- 参数：
+    - {string | Array<string>} event
+    - {Function} callback
 
-vm.$on('test', function (msg) {
-  console.log(msg)
-})
-vm.$emit('test', 'hi')
-// => "hi"
+### off( event, callback )
+
+- 参数：
+    - {string | Array<string>} event
+    - {Function} callback
+
+### trigger( event )
+
+- 参数：
+    - {string} event
