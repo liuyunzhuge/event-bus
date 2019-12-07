@@ -68,24 +68,35 @@ bus.once('some', ()=>{}) // on 替换为 once
 只有四个：`on off once trigger`。
 
 ### on( event, callback )
-
+- 作用：注册事件监听。
 - 参数：
     - {string | Array<string>} event
     - {Function} callback
 
 ### once( event, callback )
-注册仅执行一次的事件监听。
+- 作用：注册仅执行一次的事件监听。
 - 参数：
     - {string | Array<string>} event
     - {Function} callback
 
 ### off( event, callback )
-
+- 作用：移除事件监听。
 - 参数：
     - {string | Array<string>} event
     - {Function} callback
 
 ### trigger( event )
-
+- 作用：派发事件。
 - 参数：
     - {string} event
+
+## demo
+将代码clone到本地，然后运行：
+```bash
+npm install
+node server
+```
+就能通过`demo`文件下的文件来测试此库的用法。
+
+## 补充
+为什么有vuex这种专门用来管理单页全局状态的工具，还要用连vue官方都不推荐使用的`event-bus`模式来做消息同步呢？因为不是每个项目都一定要用`vuex`，很多应用的模式，可能并没有那么多全局使用的数据状态，借助一个简单的`event-bus`工具，就可以轻松完成多页面之间的消息通知；比如说某个应用有一个功能做了微信支付，其它已经打开的页面需要在支付事件完成之后做点什么，那么只需要借助`event-bus`来完成支付事件的消息传递即可，其它监听了支付消息的页面，在收到支付事件通知时，可能只需要调用一下自身刷新方法即可。
