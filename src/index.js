@@ -57,13 +57,15 @@ class EventBus {
      * register events and its callbacks
      */
     on(events, callback, once = false) {
-        if(!events) return
+        if (!events) return
 
         events = normalizeEvents(events)
 
         for (let event of events) {
-            let entry = findEntryOrCreate(this.entries, event.name)
-            entry.addCallback(event.namespaceList, callback, once)
+            if (event.name) {
+                let entry = findEntryOrCreate(this.entries, event.name)
+                entry.addCallback(event.namespaceList, callback, once)
+            }
         }
 
         return this
@@ -96,15 +98,21 @@ class EventBus {
             callback = args[1]
         }
 
-        if(!events) {
+        if (!events) {
             return this.entries.clear()
         }
 
         events = normalizeEvents(events)
         for (let event of events) {
-            let entry = findEntry(this.entries, event.name)
-            if (entry) {
-                entry.removeCallback(event.namespaceList, callback)
+            if (event.name) {
+                let entry = findEntry(this.entries, event.name)
+                if (entry) {
+                    entry.removeCallback(event.namespaceList, callback)
+                }
+            } else if (event.namespaceList) {
+                for (let [, entry] of this.entries) {
+                    entry.removeCallback(event.namespaceList, callback)
+                }
             }
         }
 
@@ -117,9 +125,10 @@ class EventBus {
      * dispatch event
      */
     trigger(event, ...data) {
-        if(!event) return
+        if (!event) return
 
         event = parseEvent(event)
+        if (!event.name) return
         let entry = findEntry(this.entries, event.name)
         if (entry) {
             entry.fire(event.namespaceList, ...data)

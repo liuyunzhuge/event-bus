@@ -55,8 +55,8 @@ bus.off('some', handler)
 // 带命名空间的移除监听
 bus.off('some.n1')
 
-// 下面这种方式不支持
-// bus.off('.n1') 
+// 根据命名空间来移除事件监听
+bus.off('.n1') 
 
 // 注册仅执行一次的监听
 bus.once('some', ()=>{}) // on 替换为 once

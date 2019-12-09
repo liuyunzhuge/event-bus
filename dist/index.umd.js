@@ -203,8 +203,11 @@
         try {
           for (var _iterator2 = events[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
             var event = _step2.value;
-            var entry = findEntryOrCreate(this.entries, event.name);
-            entry.addCallback(event.namespaceList, callback, once);
+
+            if (event.name) {
+              var entry = findEntryOrCreate(this.entries, event.name);
+              entry.addCallback(event.namespaceList, callback, once);
+            }
           }
         } catch (err) {
           _didIteratorError2 = true;
@@ -268,10 +271,38 @@
         try {
           for (var _iterator3 = events[Symbol.iterator](), _step3; !(_iteratorNormalCompletion3 = (_step3 = _iterator3.next()).done); _iteratorNormalCompletion3 = true) {
             var event = _step3.value;
-            var entry = findEntry(this.entries, event.name);
 
-            if (entry) {
-              entry.removeCallback(event.namespaceList, callback);
+            if (event.name) {
+              var entry = findEntry(this.entries, event.name);
+
+              if (entry) {
+                entry.removeCallback(event.namespaceList, callback);
+              }
+            } else if (event.namespaceList) {
+              var _iteratorNormalCompletion4 = true;
+              var _didIteratorError4 = false;
+              var _iteratorError4 = undefined;
+
+              try {
+                for (var _iterator4 = this.entries[Symbol.iterator](), _step4; !(_iteratorNormalCompletion4 = (_step4 = _iterator4.next()).done); _iteratorNormalCompletion4 = true) {
+                  var _entry = _step4.value;
+
+                  _entry.removeCallback(event.namespaceList, callback);
+                }
+              } catch (err) {
+                _didIteratorError4 = true;
+                _iteratorError4 = err;
+              } finally {
+                try {
+                  if (!_iteratorNormalCompletion4 && _iterator4["return"] != null) {
+                    _iterator4["return"]();
+                  }
+                } finally {
+                  if (_didIteratorError4) {
+                    throw _iteratorError4;
+                  }
+                }
+              }
             }
           }
         } catch (err) {
@@ -302,6 +333,7 @@
       value: function trigger(event) {
         if (!event) return;
         event = parseEvent(event);
+        if (!event.name) return;
         var entry = findEntry(this.entries, event.name);
 
         if (entry) {
