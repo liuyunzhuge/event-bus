@@ -7,6 +7,10 @@ var isArray = function isArray(some) {
   return Object.prototype.toString.call(some) == '[object Array]';
 };
 
+var isString = function isString(some) {
+  return Object.prototype.toString.call(some) == '[object String]';
+};
+
 function parseEvent(event) {
   event = event.split('.');
   return {
@@ -21,7 +25,7 @@ function getNamespaceMatcher(namespaceList) {
 
 function normalizeEvents(events) {
   if (!isArray(events)) {
-    events = [events];
+    events = [isString(isString) ? events : String(events)];
   }
 
   var _iteratorNormalCompletion = true;
@@ -96,6 +100,7 @@ function () {
      */
     value: function on(events, callback) {
       var once = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+      if (!events) return;
       events = normalizeEvents(events);
       var _iteratorNormalCompletion2 = true;
       var _didIteratorError2 = false;
@@ -155,7 +160,9 @@ function () {
       } else if (arguments.length == 2) {
         events = arguments.length <= 0 ? undefined : arguments[0];
         callback = arguments.length <= 1 ? undefined : arguments[1];
-      } else {
+      }
+
+      if (!events) {
         return this.entries.clear();
       }
 
@@ -199,6 +206,7 @@ function () {
   }, {
     key: "trigger",
     value: function trigger(event) {
+      if (!events) return;
       event = parseEvent(event);
       var entry = findEntry(this.entries, event.name);
 
