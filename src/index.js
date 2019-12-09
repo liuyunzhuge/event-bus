@@ -117,7 +117,7 @@ class EventBus {
      * dispatch event
      */
     trigger(event, ...data) {
-        if(!events) return
+        if(!event) return
 
         event = parseEvent(event)
         let entry = findEntry(this.entries, event.name)

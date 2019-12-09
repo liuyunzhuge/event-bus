@@ -206,7 +206,7 @@ function () {
   }, {
     key: "trigger",
     value: function trigger(event) {
-      if (!events) return;
+      if (!event) return;
       event = parseEvent(event);
       var entry = findEntry(this.entries, event.name);
 
