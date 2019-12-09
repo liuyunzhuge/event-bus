@@ -159,7 +159,10 @@ class EventEntry {
     }
 
     addCallback(namespaceList, callback, once = false) {
-        this.listeners.push(new EventListener(callback, namespaceList.join('.'), once))
+        // use `unshift` instead of `push`
+        // so that callbacks can be fired in the reverse order
+        // `once-only` callback can be easily removed by `splice`
+        this.listeners.unshift(new EventListener(callback, namespaceList.join('.'), once))
     }
 
     removeCallback(namespaceList, callback) {
@@ -175,25 +178,16 @@ class EventEntry {
     }
 
     fire(namespaceList, ...data) {
-        let toBeRemoved = []
-
         let matcher = namespaceList.length && getNamespaceMatcher(namespaceList)
 
-        this.listeners.forEach((listener, index) => {
-            if (!matcher || matcher.test(listener.namespaces)) {
-                listener.callback(...data)
+        for(let i = this.listeners.length - 1; i >=0; i--) {
+            if (!matcher || matcher.test(this.listeners[i].namespaces)) {
+                this.listeners[i].callback(...data)
 
-                if (listener.once) {
-                    toBeRemoved.push(index)
+                if (this.listeners[i].once) {
+                    this.listeners.splice(i, 1)
                 }
             }
-        })
-
-        if (!toBeRemoved.length) return
-        let hasRemoved = 0
-        for (let index of toBeRemoved) {
-            this.listeners.splice(index - hasRemoved, 1)
-            hasRemoved += 1
         }
     }
 }
