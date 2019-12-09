@@ -1,4 +1,5 @@
 const isArray = some => Object.prototype.toString.call(some) == '[object Array]'
+const isString = some => Object.prototype.toString.call(some) == '[object String]'
 
 function parseEvent(event) {
     event = event.split('.')
@@ -11,7 +12,7 @@ function getNamespaceMatcher(namespaceList) {
 
 function normalizeEvents(events) {
     if (!isArray(events)) {
-        events = [events]
+        events = [isString(isString) ? events : String(events)]
     }
 
     for (let [i, event] of events.entries()) {
@@ -56,6 +57,8 @@ class EventBus {
      * register events and its callbacks
      */
     on(events, callback, once = false) {
+        if(!events) return
+
         events = normalizeEvents(events)
 
         for (let event of events) {
@@ -91,7 +94,9 @@ class EventBus {
         } else if (args.length == 2) {
             events = args[0]
             callback = args[1]
-        } else {
+        }
+
+        if(!events) {
             return this.entries.clear()
         }
 
@@ -112,6 +117,8 @@ class EventBus {
      * dispatch event
      */
     trigger(event, ...data) {
+        if(!events) return
+
         event = parseEvent(event)
         let entry = findEntry(this.entries, event.name)
         if (entry) {
