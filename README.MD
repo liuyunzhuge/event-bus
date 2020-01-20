@@ -106,4 +106,5 @@ node server
 为什么有vuex这种专门用来管理单页全局状态的工具，还要用连vue官方都不推荐使用的`event-bus`模式来做消息同步呢？因为不是每个项目都一定要用`vuex`，有些应用的模式，并没有那么多全局使用的数据状态，借助一个简单的`event-bus`工具，就可以轻松完成多页面之间的消息通知；比如说某个应用有一个功能做了微信支付，其它已经打开的页面需要在支付事件完成之后做点什么，那么借助`event-bus`来完成支付事件的消息传递，其它监听了支付消息的页面，在收到支付事件通知时，可能只需要调用一下自身刷新方法即可。
 
 ## 应用
-此库在vue中的应用可使用[vue-event-bus](https://github.com/liuyunzhuge/event-bus)
+此库在vue中的应用可使用[vue-event-bus](https://github.com/liuyunzhuge/event-bus)；
+此库也可以在Hybrid应用中使用，参考[hybrid-jssdk-backbone](https://github.com/liuyunzhuge/hybrid-jssdk-backbone)中的说明。
