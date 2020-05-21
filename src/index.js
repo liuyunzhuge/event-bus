@@ -1,137 +1,108 @@
-const isArray = some => Object.prototype.toString.call(some) == '[object Array]'
-const isString = some => Object.prototype.toString.call(some) == '[object String]'
+// @flow
 
-function parseEvent(event) {
-    event = event.split('.')
-    return { name: event[0], namespaceList: event.slice(1).sort() }
+const isArray = (some: ?any): boolean => Object.prototype.toString.call(some) == '[object Array]'
+const isString = (some: ?any): boolean => Object.prototype.toString.call(some) == '[object String]'
+
+type ParsedEvent = { name: ?string, namespaceList: Array<string> }
+
+function parseEvent(event: string): ParsedEvent {
+    const events: Array<string> = event.split('.')
+    return { name: event[0], namespaceList: events.slice(1).sort() }
 }
 
-function getNamespaceMatcher(namespaceList) {
+function getNamespaceMatcher(namespaceList: Array<string>): RegExp {
     return new RegExp("(^|\\.)" + namespaceList.join("\\.(?:.*\\.|)") + "(\\.|$)");
 }
 
-function normalizeEvents(events) {
-    if (!isArray(events)) {
-        events = [isString(isString) ? events : String(events)]
-    }
-
-    for (let [i, event] of events.entries()) {
-        events[i] = parseEvent(event)
-    }
-
-    return events
-}
-
-function findEntryOrCreate(entries, name) {
-    let target = null
-    if (entries.has(name)) {
-        target = entries.get(name)
+function normalizeEvents(events: Array<string> | string): Array<ParsedEvent> {
+    let _events: Array<string>
+    let normalized: Array<ParsedEvent> = []
+    if (typeof events === 'string') {
+        _events = [isString(isString) ? events : String(events)]
     } else {
-        target = new EventEntry(name)
-        entries.set(name, target)
+        _events = events
     }
 
-    return target
+    _events.forEach((event: string) => {
+        normalized.push(parseEvent(event))
+    })
+
+    return normalized
 }
 
-function findEntry(entries, name) {
-    if (entries.has(name)) {
-        return entries.get(name)
+function findEntryOrCreate(entries: Dictionary<EventEntry>, name: string): EventEntry {
+    if (!(name in entries)) {
+        entries[name] = new EventEntry(name)
     }
 
-    return null
+    return entries[name]
 }
+
+type Dictionary<T> = { [key: string]: T }
 
 class EventBus {
+    entries: Dictionary<EventEntry> = {}
 
-    /**
-     * Map is more convenient than Object
-     */
-    entries = new Map();
+    on(
+        events: ?(Array<string> | string),
+        callback: Callback,
+        once: boolean = false
+    ): ?EventBus {
+        if (!events) return null
 
-    /**
-     * @param {String|Array} events
-     * @param {Function} callback
-     * @return {EventBus}
-     * 
-     * register events and its callbacks
-     */
-    on(events, callback, once = false) {
-        if (!events) return
+        const normalizedEvents: Array<ParsedEvent> = normalizeEvents(events)
 
-        events = normalizeEvents(events)
-
-        for (let event of events) {
+        normalizedEvents.forEach((event: ParsedEvent) => {
             if (event.name) {
-                let entry = findEntryOrCreate(this.entries, event.name)
+                let entry: EventEntry = findEntryOrCreate(this.entries, event.name)
                 entry.addCallback(event.namespaceList, callback, once)
             }
-        }
+        })
 
         return this
     }
 
-    /**
-     * @param {String|Array} events
-     * @param {Function} callback
-     * @return {EventBus}
-     * 
-     * register events and its callbacks just once
-     */
-    once(events, callback) {
-        this.on(events, callback, true)
+    once(
+        events: ?(Array<string> | string),
+        callback: Callback,
+    ): ?EventBus {
+        return this.on(events, callback, true)
     }
 
-    /**
-     * @param {String|Array} events
-     * @param {Function} callback
-     * @return {EventBus}
-     * 
-     * remove events and its callbacks
-     */
-    off(...args) {
-        let events, callback
-        if (args.length === 1) {
-            events = args[0]
-        } else if (args.length == 2) {
-            events = args[0]
-            callback = args[1]
-        }
-
+    off(
+        events: ?(Array<string> | string),
+        callback?: Callback
+    ): ?EventBus {
         if (!events) {
-            return this.entries.clear()
+            this.entries = {}
+            return
         }
 
-        events = normalizeEvents(events)
-        for (let event of events) {
+        const normalizedEvents = normalizeEvents(events)
+        normalizedEvents.forEach((event: ParsedEvent) => {
             if (event.name) {
-                let entry = findEntry(this.entries, event.name)
+                let entry = this.entries[event.name]
                 if (entry) {
                     entry.removeCallback(event.namespaceList, callback)
                 }
             } else if (event.namespaceList) {
-                for (let [, entry] of this.entries) {
-                    entry.removeCallback(event.namespaceList, callback)
-                }
+                Object.keys(this.entries).forEach((key: string) => {
+                    this.entries[key].removeCallback(event.namespaceList, callback)
+                })
             }
-        }
+        })
 
         return this
     }
 
-    /**
-     * @param {String} event 
-     * 
-     * dispatch event
-     */
-    trigger(event, ...data) {
+    trigger(event: ?string, ...data: Array<?any>): ?EventBus {
         if (!event) return
 
-        event = parseEvent(event)
-        if (!event.name) return
-        let entry = findEntry(this.entries, event.name)
+        let parsedEvent: ParsedEvent = parseEvent(event)
+        if (!parsedEvent.name) return
+        let entry = this.entries[parsedEvent.name]
         if (entry) {
-            entry.fire(event.namespaceList, ...data)
+            entry.fire(parsedEvent.namespaceList, ...data)
         }
 
         return this
@@ -139,14 +110,14 @@ class EventBus {
 }
 
 class EventEntry {
-    _listeners
-    _name
+    _listeners: Array<EventListener>
+    _name: string
 
-    constructor(name) {
+    constructor(name: string) {
         this._name = name;
     }
 
-    get listeners() {
+    get listeners(): Array<EventListener> {
         if (this._listeners === undefined) {
             this._listeners = []
         }
@@ -154,18 +125,18 @@ class EventEntry {
         return this._listeners
     }
 
-    get name() {
+    get name(): string {
         return this._name
     }
 
-    addCallback(namespaceList, callback, once = false) {
+    addCallback(namespaceList: Array<string>, callback: Callback, once: boolean = false): void {
         // use `unshift` instead of `push`
         // so that callbacks can be fired in the reverse order
         // `once-only` callback can be easily removed by `splice`
         this.listeners.unshift(new EventListener(callback, namespaceList.join('.'), once))
     }
 
-    removeCallback(namespaceList, callback) {
+    removeCallback(namespaceList: Array<string>, callback: ?Callback): void {
         let matcher = namespaceList.length && getNamespaceMatcher(namespaceList)
 
         for (let i = this.listeners.length - 1; i >= 0; i--) {
@@ -177,10 +148,10 @@ class EventEntry {
         }
     }
 
-    fire(namespaceList, ...data) {
+    fire(namespaceList: Array<string>, ...data: Array<?any>) {
         let matcher = namespaceList.length && getNamespaceMatcher(namespaceList)
 
-        for(let i = this.listeners.length - 1; i >=0; i--) {
+        for (let i = this.listeners.length - 1; i >= 0; i--) {
             if (!matcher || matcher.test(this.listeners[i].namespaces)) {
                 this.listeners[i].callback(...data)
 
@@ -192,26 +163,28 @@ class EventEntry {
     }
 }
 
-class EventListener {
-    _callback
-    _once
-    _namespaces
+type Callback = (...args?: Array<?any>) => ?any
 
-    constructor(_callback, _namespaces, _once) {
+class EventListener {
+    _callback: Callback
+    _once: boolean
+    _namespaces: string
+
+    constructor(_callback: Callback, _namespaces: string, _once: boolean) {
         this._callback = _callback
         this._once = _once
         this._namespaces = _namespaces
     }
 
-    get callback() {
+    get callback(): Callback {
         return this._callback
     }
 
-    get once() {
+    get once(): boolean {
         return this._once
     }
 
-    get namespaces() {
+    get namespaces(): string {
         return this._namespaces
     }
 }

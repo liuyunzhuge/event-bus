@@ -1,7 +1,7 @@
-import resolve from 'rollup-plugin-node-resolve';
-import commonjs from 'rollup-plugin-commonjs';
+import resolve from '@rollup/plugin-node-resolve';
+import commonjs from '@rollup/plugin-commonjs';
 import pkg from './package.json';
-import babel from 'rollup-plugin-babel';
+import babel from '@rollup/plugin-babel';
 import { uglify } from 'rollup-plugin-uglify';
 
 const ensureArray = maybeArr =>
@@ -32,7 +32,7 @@ const createConfig = ({ output, min = false } = {}) => {
             resolve(),
             babel({
                 exclude: 'node_modules/**',
-                runtimeHelpers: true,
+                babelHelpers: 'runtime',
                 plugins: [
                     [
                         '@babel/transform-runtime',
