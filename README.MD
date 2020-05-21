@@ -13,11 +13,7 @@ npm install breif-event-bus --save
 ```
 浏览器环境，可通过上面的npm命令安装后，到`node_modules/breif-event-bus/dist`目录下，直接引用`index.umd.min.js`。
 
-**注意：** 本库用到了一些新的es特性，打包发布到npm时，仅使用babel做了转码，没有做polyfill；如果使用此库，注意做polyfill。可能需要polyfill的特性有：
-```
-es6.symbol
-es6.map
-```
+**注意：** 本库在实际使用上，可能需要做额外的polyfill。
 
 示例：
 ```js
